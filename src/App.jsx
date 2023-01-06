@@ -361,13 +361,18 @@ function App() {
             animation="zoom"
             maskAnimation="fade"
             closable={false}
+            onClose={() => setIsOpen(false)}
             destroyOnClose={true}
+            center
+            wrapClassName='flex items-center justify-center'
             bodyStyle={{
-                padding: "0",
-                borderRadius: "8px",
-                overflow: "hidden"
+              padding: "0",
+              borderRadius: "8px",
+              overflow: "hidden",
+                
             }}
             visible={isOpen}
+            
           >
               <div className="flex px-8 pt-5">
                 <button onClick={() => setIsOpen(false)} className='flex items-center gap-1.5 text-sm font-medium text-primary'> <FaAngleLeft className='text-lg'/> Back</button>
