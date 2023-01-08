@@ -1,143 +1,152 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { RiGiftFill, RiHandCoinFill } from 'react-icons/ri'
 import { HiArrowSmRight } from 'react-icons/hi'
 import { IoIosSend } from 'react-icons/io'
 import { AiFillCaretDown, AiFillCaretRight } from 'react-icons/ai'
-import { FaAngleLeft } from 'react-icons/fa'
-import Dropdown from 'rc-dropdown'
-import Dialog from 'rc-dialog'
-import 'rc-dropdown/assets/index.css';
-import 'rc-dialog/assets/index.css'
+import { FaAngleLeft } from 'react-icons/fa';
+import Dropdown from 'rc-dropdown';
+import {
+  //   Column,
+  //   ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+  //   Table,
+    useReactTable,
+  } from '@tanstack/react-table';
+import BasicTable from './components/BasicTable'
+import FullFeaturedTable from './components/FullFeaturedTable'
+import Modal from './components/Modal';
+import { users } from './data';
 
-const tableData = [
-  {
-    name: 'Dwight Wisoky',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Andrew C. Henderson',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Elizabeth',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Grunewald',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Navarrette',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Patricia',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Jessica',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Landes',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Whitaker',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Agustin',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-  {
-    name: 'Edward',
-    recent_ref: '28 Nov 2022',
-    revenue: 356.05,
-    paid: 0,
-    unpaid: 35.61,
-    ready: 35.61,
-    breakdown: 'http://link.com',
-    type: 'unknown',
-    action: ''
-  },
-];
 
 function App() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [tab, setTab] = useState('pending')
-  console.log("Tab",tab)
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = React.useState(() => users);
+  const [modalData, setModalData] = React.useState([]);
+  const refreshData = () => {
+    setData(() => []);
+    setData(() => users);
+  };
+
+
+  const columns = React.useMemo(
+    () => [
+      {
+        id: 'select',
+        header: ({ table }) => (
+            <div className="flex items-center">
+                <input id="checkbox-all" type="checkbox" 
+                    {...{
+                    checked: table.getIsAllRowsSelected(),
+                    indeterminate: table.getIsSomeRowsSelected(),
+                    onChange: table.getToggleAllRowsSelectedHandler(),
+                    }} 
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
+            </div>
+        ),
+        cell: ({ row }) => (
+          <div className="flex items-center">
+            <input type="checkbox" 
+                 {...{
+                    checked: row.getIsSelected(),
+                    indeterminate: row.getIsSomeSelected(),
+                    onChange: row.getToggleSelectedHandler(),
+                  }} 
+                className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+            <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
+        </div>
+        ),
+      },
+      {
+        header: 'Affiliate Name',
+        accessorKey: 'name',
+        cell: info => <span className="text-primary">{info.getValue()}</span>,
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Most recent referral',
+        accessorKey: 'recent_ref',
+        cell: info => info.getValue(),
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Revenue',
+        accessorKey: 'revenue',
+        cell: info => <span className="text-success">{info.getValue()}</span>,
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Paid Payouts',
+        accessorKey: 'paid',
+        cell: info => info.getValue(),
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Unpaid Payouts',
+        accessorKey: 'unpaid',
+        cell: info => info.getValue(),
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Ready',
+        accessorKey: 'ready',
+        cell: info => <span className="text-red-500">{info.getValue()}</span>,
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Breakdown',
+        accessorKey: 'breakdown',
+        cell: info => <a href={info.getValue()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline flex items-center gap-1">View <HiArrowSmRight/></a>,
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Type',
+        accessorKey: 'type',
+        cell: info => <RiGiftFill className='text-xl text-secondary' />,
+        footer: props => props.column.id,
+      },
+      {
+        header: 'Action',
+        cell: ({ row }) => (
+          <div className="w-[130px]">
+            <button onClick={() => modalOpener({ rows: [row] })} className='text-white bg-primary px-6 py-1.5 rounded font-medium flex items-center gap-2'>Send payment <IoIosSend/> </button>
+          </div>
+        ),
+        footer: props => props.column.id,
+      },
+    ],
+    []
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      rowSelection,
+    },
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+  });
+
+
+  const modalOpener = (data) => {
+    setIsOpen(true);
+    setModalData(data);
+  };
+
+  const onSubmitHandler = () => {
+    table.resetRowSelection();
+    setIsOpen(prev => !prev);
+  };
 
   const SortByMenu = (
     <div onClick={(e) => e.stopPropagation()} className="bg-white border shadow-sm rounded ">
@@ -161,6 +170,7 @@ function App() {
       </div>
     </div>
   )
+
   const FilterByMenu = (
     <ul className="bg-white border shadow-sm rounded py-1.5 divide-y">
       <li className='px-4 py-1.5 cursor-pointer hover:bg-gray-100'>All pending payouts  </li>
@@ -168,11 +178,12 @@ function App() {
       <li className='px-4 py-1.5 cursor-pointer hover:bg-gray-100'>No Leaks  </li>
     </ul>
   )
+
   const ActionsMenu = (
     <ul className="bg-white border shadow-sm rounded py-1.5 divide-y">
       <li className='px-4 py-1.5 cursor-pointer hover:bg-gray-100'>Mark as paid  </li>
       <li className='px-4 py-1.5 cursor-pointer hover:bg-gray-100'>Reject  </li>
-      <li className='px-4 py-1.5 cursor-pointer hover:bg-gray-100'>Send payouts  </li>
+      <li onClick={() => modalOpener(table.getSelectedRowModel())} className='px-4 py-1.5 cursor-pointer hover:bg-gray-100'>Send payouts  </li>
     </ul>
   )
 
@@ -200,7 +211,7 @@ function App() {
             <div className="flex justify-between items-center mt-3">
               <h2 className='text-2xl text-success font-semibold '>$185.88</h2>
               <div className="">
-                <button onClick={() => setIsOpen(true)} className='text-white text-xs bg-primary px-6 py-1 rounded font-medium'>Pay All </button>
+                <button onClick={() => modalOpener(table.getRowModel())} className='text-white text-xs bg-primary px-6 py-1 rounded font-medium'>Pay All </button>
               </div>
             </div>
           </div>
@@ -225,7 +236,7 @@ function App() {
                 overlay={ActionsMenu}
                 animation="slide-up"
               >
-                <button className='text-white text-xs bg-primary px-3 py-1 rounded font-medium flex items-center gap-2'>Actions<AiFillCaretDown/></button>
+                <button disabled={rowSelection && Object.keys(rowSelection).length === 0 && Object.getPrototypeOf(rowSelection) === Object.prototype} className='text-white text-xs bg-primary px-3 py-1 rounded font-medium flex items-center gap-2'>Actions<AiFillCaretDown/></button>
               </Dropdown>
             </div>
           </div>
@@ -260,7 +271,7 @@ function App() {
                   overlay={ActionsMenu}
                   animation="slide-up"
                 >
-                  <button disabled={true} className='disabled:bg-gray-500 text-white text-xs bg-primary px-3 py-1 rounded font-medium flex items-center gap-2'>Actions<AiFillCaretDown/></button>
+                  <button disabled={rowSelection && Object.keys(rowSelection).length === 0 && Object.getPrototypeOf(rowSelection) === Object.prototype} className='disabled:bg-gray-500 text-white text-xs bg-primary px-3 py-1 rounded font-medium flex items-center gap-2'>Actions<AiFillCaretDown/></button>
                 </Dropdown>
                 <p className='text-xs text-gray-500 my-auto leading-normal items-center'>18 pending payouts</p>
               </div>
@@ -272,216 +283,70 @@ function App() {
             </div>
             {/* Table start */}
             <div className="mt-2 overflow-hidden">
-              <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                  <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                      <thead className="text-tiny bg-gray-50">
-                          <tr className='whitespace-nowrap'>
-                              <th scope="col" className="p-4">
-                                  <div className="flex items-center">
-                                      <input id="checkbox-all" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                      <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
-                                  </div>
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Affiliate Name
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Most recent referral
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Revenue
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Paid Payouts
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Unpaid Payouts
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Ready Payouts
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Breakdown
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Type
-                              </th>
-                              <th scope="col" className="px-6 py-3">
-                                  Action
-                              </th>
-                          </tr>
-                      </thead>
-                      <tbody className='text-tiny whitespace-nowrap'>
-                        {
-                          tableData.map((user, idx) => (
-                            <tr key={idx} className="bg-white border-b hover:bg-gray-100">
-                              <td className="w-4 p-4">
-                                  <div className="flex items-center">
-                                      <input id="checkbox-table-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                      <label htmlFor="checkbox-table-1" className="sr-only">checkbox</label>
-                                  </div>
-                              </td>
-                              <th scope="row" className="px-6 py-4 font-medium text-primary ">
-                                {user.name}
-                              </th>
-                              <td className="px-6 py-4 text-black font-medium">
-                                  {user.recent_ref}
-                              </td>
-                              <td className="px-6 py-4 font-medium text-success">
-                                  +${user.revenue}
-                              </td>
-                              <td className="px-6 py-4 text-black font-medium">
-                                  ${user.paid}
-                              </td>
-                              <td className="px-6 py-4 font-medium text-black">
-                                  ${user.unpaid}
-                              </td>
-                              <td className="px-6 py-4 text-red-500 font-medium">
-                                  ${user.ready}
-                              </td>
-                              <td className="px-6 py-4 font-medium">
-                                  <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline flex items-center gap-1">View <HiArrowSmRight/></a>
-                              </td>
-                              <td className='px-6 py-4'>
-                                <RiGiftFill className='text-xl text-secondary' />
-                              </td>
-                              <td className='w-[130px] px-6 py-4'>
-                                <button onClick={() => setIsOpen(true)} className='text-white bg-primary px-6 py-1.5 rounded font-medium flex items-center gap-2'>Send payment <IoIosSend/> </button>
-                              </td>
-                          </tr>
-                          ))
-                        }
-                      </tbody>
-                  </table>
+              <div className="relative overflow-x-auto shadow-md sm:rounded-lg" >
+                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-tiny bg-gray-50">
+                    {table.getHeaderGroups().map(headerGroup => (
+                        <tr key={headerGroup.id} className='whitespace-nowrap'>
+                        {headerGroup.headers.map(header => {
+                            return (
+                            <th key={header.id} colSpan={header.colSpan} scope="col" className="px-6 py-3">
+                                {header.isPlaceholder ? null : (
+                                <>
+                                    {flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                    )}
+                                    {/* {header.column.getCanFilter() ? (
+                                    <div>
+                                        <Filter column={header.column} table={table} />
+                                    </div>
+                                    ) : null} */}
+                                </>
+                                )}
+                            </th>
+                            )
+                        })}
+                        </tr>
+                    ))}
+                    </thead>
+                    <tbody className='text-tiny whitespace-nowrap'>
+                    {table.getRowModel().rows.map(row => {
+                        return (
+                        <tr key={row.id} className="bg-white border-b hover:bg-gray-100">
+                            {row.getVisibleCells().map(cell => {
+                            return (
+                                <td key={cell.id} className="px-6 py-4 text-black font-medium">
+                                {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                )}
+                                </td>
+                            )
+                            })}
+                        </tr>
+                        )
+                    })}
+                    </tbody>
+                    {/* <tfoot>
+                    <tr>
+                        <td className="p-1">
+                        <IndeterminateCheckbox
+                            {...{
+                            checked: table.getIsAllPageRowsSelected(),
+                            indeterminate: table.getIsSomePageRowsSelected(),
+                            onChange: table.getToggleAllPageRowsSelectedHandler(),
+                            }}
+                        />
+                        </td>
+                        <td colSpan={20}>Page Rows ({table.getRowModel().rows.length})</td>
+                    </tr>
+                    </tfoot> */}
+                </table>
               </div>
             </div>
+            <Modal data={modalData} onSubmit={() => onSubmitHandler()} visible={isOpen} onClose={() => setIsOpen(prev => !prev)} />
           </div>
-          {/* Modal Start */}
-          <Dialog
-            animation="zoom"
-            maskAnimation="fade"
-            closable={false}
-            onClose={() => setIsOpen(false)}
-            destroyOnClose={true}
-            center
-            wrapClassName='flex items-center justify-center'
-            bodyStyle={{
-              padding: "0",
-              borderRadius: "8px",
-              overflow: "hidden",
-                
-            }}
-            visible={isOpen}
-            
-          >
-              <div className="flex px-8 pt-5">
-                <button onClick={() => setIsOpen(false)} className='flex items-center gap-1.5 text-sm font-medium text-primary'> <FaAngleLeft className='text-lg'/> Back</button>
-                <p className='w-full flex justify-center font-medium text-gray-500 mr-[55px]'>Confirm Payouts</p>
-              </div>
-              <div className="overflow-hidden px-2 sm:px-8">
-                <div className="">
-                  <div className="border-2 rounded-lg border-primary my-8 px-4 py-5">
-                    <div className="overflow-x-auto ">
-                      <p className='font-normal  text-center text-xs md:text-sm py-3 border-b text-secondary'>
-                        The following affiliates will be sent payouts:
-                      </p>
-                      <table className="w-full text-tiny text-left text-gray-500 dark:text-gray-400">
-                          <thead className="text-gray-700 font-bold border-b-2">
-                              <tr>
-                                  <th scope="col" className="px-6 py-3 text-center">
-                                      Affiliate
-                                  </th>
-                                  <th scope="col" className="px-6 py-3 text-center">
-                                      Commission
-                                  </th>
-                                  <th scope="col" className="px-6 py-3 text-center">
-                                      Type
-                                  </th>
-                              </tr>
-                          </thead>
-                          <tbody >
-                              <tr className="whitespace-nowrap bg-white border-b hover:bg-gray-100 divide-y">
-                                  <th scope="row" className="px-6 py-4 flex gap-2 font-normal items-center justify-center text-black ">
-                                      <div className="flex items-center">
-                                          <input id="checkbox-table-1" type="checkbox" defaultChecked className="w-3 h-3 md:w-4 md:h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                          <label htmlFor="checkbox-table-1" className="sr-only">checkbox</label>
-                                      </div>
-                                      Dwight Wisoky
-                                  </th>
-                                  <td className="px-6 py-4 text-black text-center font-bold">
-                                      $16.20
-                                  </td>
-                                  <td className="px-6 py-4 text-center text-black">
-                                      Store Credit
-                                  </td>
-                              </tr>
-                              <tr className="whitespace-nowrap bg-white border-b hover:bg-gray-100 divide-y">
-                                  <th scope="row" className="px-6 py-4 flex gap-2 font-normal items-center justify-center text-black ">
-                                      <div className="flex items-center">
-                                          <input id="checkbox-table-1" type="checkbox" defaultChecked className="w-3 h-3 md:w-4 md:h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                          <label htmlFor="checkbox-table-1" className="sr-only">checkbox</label>
-                                      </div>
-                                      Dwight Wisoky
-                                  </th>
-                                  <td className="px-6 py-4 text-black text-center font-bold">
-                                      $16.20
-                                  </td>
-                                  <td className="px-6 py-4 text-center text-black">
-                                      Store Credit
-                                  </td>
-                              </tr>
-                              <tr className="whitespace-nowrap bg-white border-b hover:bg-gray-100 divide-y">
-                                  <th scope="row" className="px-6 py-4 flex gap-2 font-normal items-center justify-center text-black ">
-                                      <div className="flex items-center">
-                                          <input id="checkbox-table-1" type="checkbox" defaultChecked className="w-3 h-3 md:w-4 md:h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                          <label htmlFor="checkbox-table-1" className="sr-only">checkbox</label>
-                                      </div>
-                                      Dwight Wisoky
-                                  </th>
-                                  <td className="px-6 py-4 text-black text-center font-bold">
-                                      $16.20
-                                  </td>
-                                  <td className="px-6 py-4 text-center text-black">
-                                      Store Credit
-                                  </td>
-                              </tr>
-                          </tbody>
-                          <tfoot className='font-medium text-black divide-y'>
-                            <tr>
-                              <th scope="col" className="px-6 py-3 text-center">
-                                    Store Credit:
-                                </th>
-                                <th></th>
-                                <th scope="col" className="px-6 py-3 text-center">
-                                    $ 185.88
-                                </th>
-                            </tr>
-                            <tr>
-                              <th scope="col" className="px-6 py-3 text-center">
-                                    Tremendous:
-                                </th>
-                                <th></th>
-                                <th scope="col" className="px-6 py-3 text-center">
-                                    $0.00
-                                </th>
-                            </tr>
-                            <tr>
-                                <th scope="col" className="px-6 py-3 text-center">
-                                    Total:
-                                </th>
-                                <th></th>
-                                <th scope="col" className="px-6 py-3 text-center">
-                                    $ 185.88
-                                </th>
-                            </tr>
-                          </tfoot>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button onClick={() => setIsOpen(false)} className='w-full justify-center text-white bg-primary px-6 py-4 font-semibold flex items-center gap-2'>Send payment <IoIosSend/> </button>
-          </Dialog>
         </div>
       </div>
     </div>
